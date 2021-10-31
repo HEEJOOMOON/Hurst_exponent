@@ -17,7 +17,7 @@ def cumsum(df: pd.Series,
     df = df.pct_change()
     df = df - df.mean()
     df = df.cumsum()
-    return df
+    return df.dropna()
 
 
 def detrend(df: pd.Series,
@@ -48,19 +48,22 @@ def DFA(data: pd.Series,
     :return: (np.ndarray) hurst exponent
     '''
 
-    F_2 = []
+    F = []
     size = []
     for w in window:
+        tmp = 0
         for i in range(int(len(data)/w)):
-            detrended = detrend(data[i*window:(i+1)*window])
-            F_2 += np.sum(np.abs(detrended)**2) / window
+            detrended = detrend(data[i*w:(i+1)*w])
+            tmp += np.sum(np.abs(detrended)**2) / w
 
-        F_2 /= int(len(data)/w)
-        hurst = np.log(np.sqrt(F_2)) / np.log(window)
+        tmp /= int(len(data)/w)
+        size.append(w)
+        F.append(np.sqrt(tmp))
+    hurst = np.polyfit(np.log(size), np.log(F), 1)[0]
 
-        if hurst > 1 or hurst < 0:
-            raise ValueError('Hurst exponent는 0과 1 사이')
-        else: return hurst
+    if hurst > 1 or hurst < 0:
+        raise ValueError('Hurst exponent는 0과 1 사이')
+    else: return hurst
 
 
 def time_scale(origin: pd.Series,
@@ -77,20 +80,19 @@ def time_scale(origin: pd.Series,
 
     out = {}
     for t in time:
-        for l in range(0, len(origin)-t):
-            tmp = cumsum(origin[l:l+t])
+        for l in range(0, len(origin)-(t+1)):
+            tmp = cumsum(origin[l:l+t+1])
             hurst_ = DFA(tmp, window)
             try: out[t]+=[hurst_]
             except KeyError: out[t]=[hurst_]
 
-    return pd.DataFrame.from_dict(out, columns=time)
+    return out
 
 
 if __name__=='__main__':
     data = yf.download('KO', '2017-01-01')
     data = data['Close']
-    time = [64, 128, 256]
-    window = [2, 4, 8, 16]
+    time = [256]
+    window = [16, 32]
     results = time_scale(data, time, window)
-    sns.heatmap(results)
-    plt.show()
+    print(results)

@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import yfinance as yf
 import seaborn as sns
-from collections import defaultdict
+from DFA import cumsum
 
 def cal_ma(df: pd.Series,
            window: int) -> pd.Series:
@@ -16,7 +16,7 @@ def cal_ma(df: pd.Series,
     return df.rolling(window).mean().dropna()
 
 
-def hurst_expo(df: pd.Series,
+def DMA(df: pd.Series,
                window: int,
                ) -> np.array:
     '''
@@ -43,17 +43,16 @@ def time_scale(origin: pd.Series,
     :return: (pd.DataFrame) hurst_exponent (index: time, column: scale)
     '''
 
-    out = defaultdict(dict)
+    out = {}
     for t in time:
         for l in range(0, len(origin)-t):
             tmp = origin[l:l+t]
-            for w in window:
-                hurst_ = hurst_expo(tmp, w)
-                try:
-                    out[t] += hurst_
-                except KeyError:
-                    out[t] = hurst_
-    return out
+            hurst_ = DMA(tmp, window)
+            try:
+                out[t] += hurst_
+            except KeyError:
+                out[t] = hurst_
+    return pd.DataFrame.from_dict(out, columns=time)
 
 
 if __name__ == '__main__':

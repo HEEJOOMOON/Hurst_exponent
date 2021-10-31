@@ -28,7 +28,7 @@ def hurst_exponent(range_, df):
         R_S.append(np.log(np.mean(tmp_list)))
         size.append(np.log(len(j)))
 
-    results = np.polyfit(np.log(size), np.log(R_S), 1)
+    results = np.polyfit(size, R_S, 1)
 
     return results[0]
 
