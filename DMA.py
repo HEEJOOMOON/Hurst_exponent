@@ -17,17 +17,21 @@ def cal_ma(df: pd.Series,
 
 
 def DMA(df: pd.Series,
-               window: int,
+               window: list,
                ) -> np.array:
     '''
 
     :param df: (pd.Series) Close price
-    :param window: (int) Rolling window
+    :param window: (list) Rolling window
     :return: (np.ndarray) hurst exponent
     '''
-
-    sigma_MA = (1/(len(df)-window))*(np.sum(df.iloc[window:]-cal_ma(df, window))**2)
-    hurst = np.log(np.sqrt(sigma_MA)) / np.log(window)
+    F = []
+    size = []
+    for w in window:
+        sigma_MA = (np.sum(df.iloc[w:]-cal_ma(df, w))**2) / w
+        F.append(np.log(np.sqrt(sigma_MA)))
+        size.append(np.log(w))
+    hurst = np.polyfit(size, F, 1)[0]
     return hurst
 
 
@@ -46,7 +50,7 @@ def time_scale(origin: pd.Series,
     out = {}
     for t in time:
         for l in range(0, len(origin)-t):
-            tmp = origin[l:l+t]
+            tmp = cumsum(origin[l:l+t])
             hurst_ = DMA(tmp, window)
             try:
                 out[t] += hurst_
@@ -56,10 +60,10 @@ def time_scale(origin: pd.Series,
 
 
 if __name__ == '__main__':
-    df = yf.download('KO', '2000-01-01')
+    df = yf.download('KO', '2017-01-01')
     df = df['Close']
     time = [64, 128, 256]
-    window = [20, 60, 120]
+    window = [3, 5, 10, 20, 60, 120]
     out = {}
     hurst_ = time_scale(df, time, window)
     sns.clustermap(hurst_)
