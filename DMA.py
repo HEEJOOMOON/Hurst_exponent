@@ -32,7 +32,10 @@ def DMA(df: pd.Series,
         F.append(np.log(np.sqrt(sigma_MA)))
         size.append(np.log(w))
     hurst = np.polyfit(size, F, 1)[0]
-    return hurst
+
+    if hurst > 1 or hurst < 0:
+        raise ValueError('Hurst exponent는 0과 1 사이')
+    else: return hurst
 
 
 def time_scale(origin: pd.Series,
