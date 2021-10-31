@@ -90,9 +90,8 @@ def time_scale(origin: pd.Series,
 
 
 if __name__=='__main__':
-    data = yf.download('KO', '2017-01-01')
+    data = yf.download('KO', '2000-01-01')
     data = data['Close']
-    time = [256]
+    time = [64, 128, 256]
     window = [2, 4, 8, 16, 32, 64]
     results = time_scale(data, time, window)
-    print(results)
