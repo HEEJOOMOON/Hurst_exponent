@@ -57,9 +57,9 @@ def DFA(data: pd.Series,
             tmp += np.sum(np.abs(detrended)**2) / w
 
         tmp /= int(len(data)/w)
-        size.append(w)
-        F.append(np.sqrt(tmp))
-    hurst = np.polyfit(np.log(size), np.log(F), 1)[0]
+        size.append(np.log(w))
+        F.append(np.log(np.sqrt(tmp)))
+    hurst = np.polyfit(size, F, 1)[0]
 
     if hurst > 1 or hurst < 0:
         raise ValueError('Hurst exponent는 0과 1 사이')
@@ -93,6 +93,6 @@ if __name__=='__main__':
     data = yf.download('KO', '2017-01-01')
     data = data['Close']
     time = [256]
-    window = [16, 32]
+    window = [2, 4, 8, 16, 32, 64]
     results = time_scale(data, time, window)
     print(results)
