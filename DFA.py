@@ -67,31 +67,29 @@ def DFA(data: pd.Series,
 
 
 def time_scale(origin: pd.Series,
-               time: list,
+               t: int,
                window: list,
                ) -> pd.DataFrame:
     '''
 
-    :param origin: (pd.Series total period's close prices
-    :param time: (list)
+    :param origin: (pd.Series) total period's close prices
+    :param time: (int)
     :param window: (list)
     :return: (defaultdict) hurst_exponent
     '''
 
     out = {}
-    for t in time:
-        for l in range(0, len(origin)-(t+1)):
-            tmp = cumsum(origin[l:l+t+1])
-            hurst_ = DFA(tmp, window)
-            try: out[t]+=[hurst_]
-            except KeyError: out[t]=[hurst_]
+    for l in range(0, len(origin)-(t+1)):
+        tmp = cumsum(origin[l:l+t+1])
+        hurst_ = DFA(tmp, window)
+        try: out[t]+=[hurst_]
+        except KeyError: out[t]=[hurst_]
 
     return out
 
 
 if __name__=='__main__':
-    data = yf.download('KO', '2000-01-01')
+    data = yf.download('^GSPC', '1990-01-01')
     data = data['Close']
-    time = [64, 128, 256]
     window = [2, 4, 8, 16, 32, 64]
-    results = time_scale(data, time, window)
+    results = time_scale(data, t=64, window=window)

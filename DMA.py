@@ -25,6 +25,7 @@ def DMA(df: pd.Series,
     :param window: (list) Rolling window
     :return: (np.ndarray) hurst exponent
     '''
+
     F = []
     size = []
     for w in window:
@@ -47,27 +48,24 @@ def time_scale(origin: pd.Series,
     :param origin: (pd.Series) total period's close prices
     :param time: (list)
     :param window: (list)
-    :return: (pd.DataFrame) hurst_exponent (index: time, column: scale)
+    :return: (dict) hurst_exponent by time_scale
     '''
 
     out = {}
     for t in time:
-        for l in range(0, len(origin)-t):
-            tmp = cumsum(origin[l:l+t])
+        for l in range(0, len(origin)-(t+1)):
+            tmp = cumsum(origin[l:l+t+1])
             hurst_ = DMA(tmp, window)
             try:
                 out[t] += hurst_
             except KeyError:
                 out[t] = hurst_
-    return pd.DataFrame.from_dict(out, columns=time)
+    return out
 
 
 if __name__ == '__main__':
     df = yf.download('KO', '2017-01-01')
     df = df['Close']
-    time = [64, 128, 256]
-    window = [3, 5, 10, 20, 60, 120]
-    out = {}
-    hurst_ = time_scale(df, time, window)
-    sns.clustermap(hurst_)
-    plt.show()
+    time = [128]
+    window = [10, 20, 60]
+    results = time_scale(df, time, window)

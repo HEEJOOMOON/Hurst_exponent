@@ -1,11 +1,7 @@
-import yfinance as yf
+import FinanceDataReader as fdr
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-def cal_return(df):
-    return df.pct_change().dropna()
 
 
 def cal_R_S(df):
@@ -43,21 +39,14 @@ def time_series_hurst_expo(n, df, range_):
     :return:
     '''
     h_df = pd.DataFrame(columns=['hurst_exp'])
-    for i in range(0, len(df)-n, n):
+    for i in range(0, len(df)-n):
         h_df.loc[df[i:i+n].index[-1]] = hurst_exponent(range_, df[i:i+n])
 
     return h_df
 
 
 if __name__ == '__main__':
-    df = yf.download('^GSPC', '2019-01-01', '2021-9-30')
-    data = cal_return(df.Close)
-    range_ = [1, 3, 4, 6, 12]
-    h_df = time_series_hurst_expo(64, data, range_)
-    h_df_t = h_df.loc[h_df['hurst_exp'] > 0.54].index
-    h_df_mr = h_df.loc[h_df['hurst_exp'] < 0.46].index
-    plt.figure(figsize=(20, 10))
-    df.plot()
-    plt.scatter(h_df_t, df.loc[h_df_t], color='blue', marker='^', s=30)
-    plt.scatter(h_df_mr, df.loc[h_df_mr], color='red', marker='v', s=30)
-    plt.show()
+    df = fdr.DataReader('US500')
+    data = np.log(df.Close)
+    range_ = [2, 4, 8, 16, 32, 64]
+    h_df = time_series_hurst_expo(128, data, range_)
