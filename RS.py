@@ -12,11 +12,14 @@ def cal_R_S(df):
     return R/S
 
 
-def hurst_exponent(range_, df):
+def hurst_exponent(df):
     size = []
     R_S = []
 
-    for i in range_:
+    if len(df) < 30:
+        raise ValueError('A time series is too short. Length must be more than 30')
+
+    for i in range(20, len(df/2)):
         tmp_list = []
 
         for j in np.array_split(df, i):
@@ -47,6 +50,6 @@ def time_series_hurst_expo(n, df, range_):
 
 if __name__ == '__main__':
     df = fdr.DataReader('US500')
-    data = np.log(df.Close)
+    data = df.Close
     range_ = [2, 4, 8, 16, 32, 64]
     h_df = time_series_hurst_expo(128, data, range_)
