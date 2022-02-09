@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
-import yfinance as yf
+import FinanceDataReader as fdr
 import seaborn as sns
 
 
@@ -89,7 +89,7 @@ def time_scale(origin: pd.Series,
 
 
 if __name__=='__main__':
-    data = yf.download('^GSPC', '1990-01-01')
+    data = fdr.DataReader('US500')
     data = data['Close']
     window = [2, 4, 8, 16, 32, 64]
     results = time_scale(data, t=64, window=window)
