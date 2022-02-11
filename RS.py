@@ -19,7 +19,7 @@ def hurst_exponent(df):
     if len(df) < 30:
         raise ValueError('A time series is too short. Length must be more than 30')
 
-    for i in range(20, len(df/2)):
+    for i in range(30, len(df/2)):
         tmp_list = []
 
         for j in np.array_split(df, i):
