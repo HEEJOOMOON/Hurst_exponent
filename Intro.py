@@ -10,7 +10,7 @@ from Brownian_Motion import Brownian
 def hurst_exponent(time_series, max_lag=20):
 
     lags = range(2, max_lag)
-
+    time_series = np.log(time_series)
     tau = [np.std(np.array(time_series[lag:] - np.array(time_series[:-lag]))) for lag in lags]
 
     reg = np.polyfit(np.log(lags), np.log(tau), 1)
@@ -19,13 +19,13 @@ def hurst_exponent(time_series, max_lag=20):
 
 
 simulation = pd.DataFrame(columns=['mean_revert', 'gbm', 'trend'])
-gbm = Brownian(process='geometric', period='daily').simulation(mu=0.05, sigma=0.25, n=10000)
-mr = Ornstein_Uhlenbeck(period='daily').simulation(mu=0.1, theta=0.3, sigma=0.25, n=10000)
-trend = Brownian(process='arithmetic', period='daily').simulation(mu=0.1, sigma=0.25, n=10000)
+gbm = Brownian(series=None, process='geometric', period='daily').simulation(mu=0.05, sigma=0.25, n=1000)
+mr = Ornstein_Uhlenbeck(series=None, period='daily').simulation(mu=0.1, theta=0.5, sigma=0.25, n=1000)
+trend = Brownian(series=None, process='arithmetic', period='daily').simulation(mu=1, sigma=0.25, n=1000)
 simulation['mean_revert'] = mr
 simulation['gbm'] = gbm
 simulation['trend'] = trend
-max_lags = [50, 100, 150, 200, 250, 300, 350, 500, 1000]
+max_lags = [5, 10, 20, 50, 100, 200, 500]
 results = pd.DataFrame(index=['mr', 'gbm', 'trend'], columns=max_lags)
 for i in max_lags:
     results.loc['gbm'][i] = hurst_exponent(simulation['gbm'], max_lag=i)
