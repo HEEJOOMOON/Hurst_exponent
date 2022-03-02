@@ -34,6 +34,8 @@ for i in max_lags:
     results.loc['mr'][i] = hurst_exponent(simulation['mean_revert'], max_lag=i)
     results.loc['trend'][i] = hurst_exponent(simulation['trend'], max_lag=i)
 
+print(results, '\n')
+
 data = fdr.DataReader('US500', '2010-01-01')['Close']
 for i in max_lags:
     print('Hurst exponent with lag %d: ' %i, hurst_exponent(data, i))
