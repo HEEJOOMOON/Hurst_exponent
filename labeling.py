@@ -10,10 +10,10 @@ def cal_tval(df: np.array,
              ):
     x = np.ones((df.shape[0], 2))
     x[:, 1] = np.arange(df.shape[0])
-    result = np.linalg.lstsq()
-    beta = result[0]
+    result = np.linalg.lstsq(x, df, rcond=None)
+    beta_0, beta_1 = result[0]
     se = result[1]
-    tval = beta/se
+    tval = beta_1/se
 
     return tval
 
