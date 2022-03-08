@@ -12,7 +12,7 @@ def cal_tval(df: np.array,
     x[:, 1] = np.arange(df.shape[0])
     result = np.linalg.lstsq(x, df, rcond=None)
     beta_0, beta_1 = result[0]
-    se = result[1]
+    se = np.sqrt(result[1]/(df.shape[0]-2)) / np.sqrt(np.sum(x[:, 1]-np.mean(x[:, 1])))
     tval = beta_1/se
 
     return tval
