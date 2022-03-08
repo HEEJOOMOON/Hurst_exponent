@@ -2,7 +2,6 @@
 
 import numpy as np
 import pandas as pd
-from Intro import hurst_exponent
 
 
 def cal_tval(df: np.array,
@@ -46,7 +45,5 @@ def trend_scanning_label(df: pd.Series,
     return out.dropna(subset='bin')
 
 
-def output_label():
-
-    return None
-
+if __name__=='__main__':
+    from Intro import hurst_exponent
