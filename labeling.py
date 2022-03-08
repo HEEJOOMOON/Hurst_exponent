@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-def cal_tval(df: np.array,
+def cal_tval(df: pd.Series,
              ):
     x = np.ones((df.shape[0], 2))
     x[:, 1] = np.arange(df.shape[0])
