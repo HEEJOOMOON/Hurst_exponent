@@ -34,14 +34,14 @@ def trend_scanning_label(df: pd.Series,
         if idx+max(lags) > df.shape[0]: continue
 
         for l in lags:
-            end_t = idx+l-1
+            end_t = idx+l
             tmp.cal_tval(df.iloc[idx:end_t])
-            tmp.loc[end_t] = cal_tval(df.iloc[idx: end_t])
+            tmp.iloc[end_t-1] = cal_tval(df.iloc[idx: end_t])
         dt = tmp.replace([np.inf, -np.inf, np.nan], 0).abs().idxmax()
-        out.loc[i, ['t1', 'tVal', 'bin']] = tmp.index[-1], tmp[dt], np.sign(tmp[dt])
+        out.loc[i, ['t1', 'tVal', 'bin']] = df.index[tmp.index[-1]], tmp[dt], np.sign(tmp[dt])
 
     out['t1'] = pd.to_datetime(out['t1'])
-    out['bin'] = pd.to_numeric(out['bin'])
+    out['bin'] = pd.to_numeric(out['bin'], downcast='signed')
     return out.dropna(subset='bin')
 
 
