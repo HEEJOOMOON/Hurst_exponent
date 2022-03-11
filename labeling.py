@@ -47,3 +47,8 @@ def trend_scanning_label(df: pd.Series,
 
 if __name__=='__main__':
     from Intro import hurst_exponent
+    import matplotlib.pyplot as plt
+    import FinanceDataReader as fdr
+
+    df = fdr.DataReader('us500', '2017-01-01').Close
+
