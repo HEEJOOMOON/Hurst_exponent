@@ -52,4 +52,3 @@ if __name__=='__main__':
 
     df = fdr.DataReader('us500', '2017-01-01').Close
     ts = trend_scanning_label(df, [5, 30])
-    he = hurst_exponent(df, max_lag=30)
