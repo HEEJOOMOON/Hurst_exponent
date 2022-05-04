@@ -18,30 +18,32 @@ def hurst_exponent(time_series, max_lag=20):
     return reg[0]
 
 
-simulation = pd.DataFrame(columns=['mean_revert', 'gbm', 'trend'])
-gbm = Brownian.simulation(process='geometric', mu=0.05, sigma=0.1)
-mr = Ornstein_Uhlenbeck.simulation(mu=0.1, theta=3.0, sigma=0.01)
-trend = Brownian.simulation(process='arithmetic', mu=100, sigma=0.25)
+if __name__ == '__main__':
 
-simulation['mean_revert'] = mr+100
-simulation['gbm'] = gbm
-simulation['trend'] = trend
+    simulation = pd.DataFrame(columns=['mean_revert', 'gbm', 'trend'])
+    gbm = Brownian.simulation(process='geometric', mu=0.05, sigma=0.1)
+    mr = Ornstein_Uhlenbeck.simulation(mu=0.1, theta=3.0, sigma=0.01)
+    trend = Brownian.simulation(process='arithmetic', mu=100, sigma=0.25)
 
-n = 1000
-max_lags = [5, 10, 20, 50, 100, 200, 500]
-results = pd.DataFrame(index=range(n), columns=max_lags)
-results['key'] = None
-for idx in range(n):
+    simulation['mean_revert'] = mr+100
+    simulation['gbm'] = gbm
+    simulation['trend'] = trend
+
+    n = 1000
+    max_lags = [5, 10, 20, 50, 100, 200, 500]
+    results = pd.DataFrame(index=range(n), columns=max_lags)
+    results['key'] = None
+    for idx in range(n):
+        for i in max_lags:
+            results.loc[idx*3, i] = hurst_exponent(simulation['gbm'], max_lag=i)
+            results.loc[idx*3+1, i] = hurst_exponent(simulation['mean_revert'], max_lag=i)
+            results.loc[idx*3+2, i] = hurst_exponent(simulation['trend'], max_lag=i)
+        results.loc[idx*3, 'key'] = 'gbm'
+        results.loc[idx*3+1, 'key'] = 'mean_revert'
+        results.loc[idx*3+2, 'key'] = 'trend'
+
+    out = results.groupby('key').mean()
+
+    data = fdr.DataReader('US500', '2010-01-01')['Close']
     for i in max_lags:
-        results.loc[idx*3, i] = hurst_exponent(simulation['gbm'], max_lag=i)
-        results.loc[idx*3+1, i] = hurst_exponent(simulation['mean_revert'], max_lag=i)
-        results.loc[idx*3+2, i] = hurst_exponent(simulation['trend'], max_lag=i)
-    results.loc[idx*3, 'key'] = 'gbm'
-    results.loc[idx*3+1, 'key'] = 'mean_revert'
-    results.loc[idx*3+2, 'key'] = 'trend'
-
-out = results.groupby('key').mean()
-
-data = fdr.DataReader('US500', '2010-01-01')['Close']
-for i in max_lags:
-    print('Hurst exponent with lag %d: ' %i, hurst_exponent(data, i))
+        print('Hurst exponent with lag %d: ' %i, hurst_exponent(data, i))

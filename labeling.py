@@ -46,10 +46,24 @@ def trend_scanning_label(df: pd.Series,
 
 
 if __name__=='__main__':
+
+    import sys
+    sys.path.append('/home/hjmoon/PycharmProjects/Stochastic_Process/')
+    from OU_Process import Ornstein_Uhlenbeck
     from Intro import hurst_exponent
     import matplotlib.pyplot as plt
-    import FinanceDataReader as fdr
 
-    df = fdr.DataReader('us500', '2017-01-01').Close
-    ts = trend_scanning_label(df, [5, 30])
-    label1 = ts['tVal']
+    simulation = pd.DataFrame()
+    simulation['RW'] = Ornstein_Uhlenbeck.simulation(mu=0, sigma=1, theta=1, n=10000)
+    simulation['HL1'] = Ornstein_Uhlenbeck.simulation(mu=0, sigma=1, theta=2**(-1/50), n=10000)
+    simulation['HL2'] = Ornstein_Uhlenbeck.simulation(mu=0, sigma=1, theta=2**(-1/100), n=10000)
+    simulation['HL3'] = Ornstein_Uhlenbeck.simulation(mu=0, sigma=1, theta=2**(-1/200), n=10000)
+    L = [30, 100]
+
+    returns = simulation.pct_change()
+    t_values = pd.DataFrame()
+    t_values['RW'] = trend_scanning_label(returns['RW'], L=L)
+    t_values['HL1'] = trend_scanning_label(returns['HL1'], L=L)
+    t_values['HL2'] = trend_scanning_label(returns['HL2'], L=L)
+    t_values['HL3'] = trend_scanning_label(returns['HL3'], L=L)
+
