@@ -62,10 +62,10 @@ if __name__=='__main__':
 
     returns = simulation.pct_change()
     t_values = pd.DataFrame()
-    t_values['RW'] = trend_scanning_label(simulation['RW'], L=L)
-    t_values['HL1'] = trend_scanning_label(simulation['HL1'], L=L)
-    t_values['HL2'] = trend_scanning_label(simulation['HL2'], L=L)
-    t_values['HL3'] = trend_scanning_label(simulation['HL3'], L=L)
+    t_values['RW'] = trend_scanning_label(simulation['RW'], L=L).tVal
+    t_values['HL1'] = trend_scanning_label(simulation['HL1'], L=L).tVal
+    t_values['HL2'] = trend_scanning_label(simulation['HL2'], L=L).tVal
+    t_values['HL3'] = trend_scanning_label(simulation['HL3'], L=L).tVal
 
     plt.style.use('seaborn')
     plt.figure(figsize=(16, 4))
