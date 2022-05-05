@@ -21,20 +21,29 @@ def cumsum(df: pd.Series,
 
 
 def detrend(df: pd.Series,
+            method: str
             ) -> pd.Series:
     '''
 
-    :param df: (pd.Series) Stochastic time series cumsum data
-    :return: (pd.Series) detrended stock prices
+    :param df: (pd.Series) time-serise data
+    :param method: 'linear' or 'hp_filter'
+    :return: (pd.Series) detrended time series data
     '''
 
-    X = np.arange(0, len(df))*0.1
-    Y = df
-    X = sm.add_constant(X)
+    if method=='linear':
+        X = np.arange(0, len(df))*0.1
+        Y = df
+        X = sm.add_constant(X)
 
-    results = np.linalg.inv(X.T @ X) @ X.T @ Y
+        results = np.linalg.inv(X.T @ X) @ X.T @ Y
 
-    trend = results[0] + results[1]*X[:, 1]
+        trend = results[0] + results[1]*X[:, 1]
+
+    elif method == 'hp_filter':
+        None
+
+    else:
+        raise KeyError('The method is linear or hp_filter')
 
     return Y - trend
 
