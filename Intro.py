@@ -17,6 +17,32 @@ def hurst_exponent(time_series, max_lag=20):
 
     return reg[0]
 
+def hurst_label(df: pd.Series,
+                max_length: int,
+                ):
+    '''
+
+    :param df: time sereis data
+    :param max_length: sub time series length
+    :return: hurst value label dataframe
+    '''
+
+    out = pd.DataFrame(index=df.index, columns=['t1', 'tVal'])
+
+    for i in df.index:
+        tmp = pd.Series()
+        idx = df.index.get_loc(i)
+        if idx+max_length > df.shape[0]: continue
+
+        end_t = idx+max_length
+        tmp.loc[df.index[end_t-1]] = hurst_exponent(df.iloc[idx: end_t], max_lag=int(4/max_length))
+        dt = tmp.replace([np.inf, -np.inf, np.nan], 0).abs().idxmax()
+        out.loc[i, ['t1', 'tVal']] = df.index[tmp.index[-1]], tmp[dt]
+
+    out['t1'] = pd.to_datetime(out['t1'])
+
+    return out
+
 
 if __name__ == '__main__':
 
