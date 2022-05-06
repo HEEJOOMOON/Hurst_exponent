@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import FinanceDataReader as fdr
 import seaborn as sns
+from statsmodels.tsa.filters.hp_filter import hpfilter
 
 
 def cumsum(df: pd.Series,

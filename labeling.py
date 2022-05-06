@@ -98,4 +98,3 @@ if __name__=='__main__':
     hurst_values['HL1'] = hurst_label(simulation['HL1'], max_length=L[1])
     hurst_values['HL2'] = hurst_label(simulation['HL2'], max_length=L[1])
     hurst_values['HL3'] = hurst_label(simulation['HL3'], max_length=L[1])
-

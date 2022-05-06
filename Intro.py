@@ -37,7 +37,7 @@ def hurst_label(df: pd.Series,
         end_t = idx+max_length
         tmp.loc[df.index[end_t-1]] = hurst_exponent(df.iloc[idx: end_t], max_lag=int(4/max_length))
         dt = tmp.replace([np.inf, -np.inf, np.nan], 0).abs().idxmax()
-        out.loc[i, ['t1', 'tVal']] = df.index[tmp.index[-1]], tmp[dt]
+        out.loc[i, ['t1', 'hurst']] = df.index[tmp.index[-1]], tmp[dt]
 
     out['t1'] = pd.to_datetime(out['t1'])
 
